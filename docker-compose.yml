@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      target: ${NODE_ENV}
+    container_name: monolith-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+      - postgres_0_12
+      - postgres_12_24
+      - redis
+    networks:
+      - monolith-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    env_file:
+      - .env
+    networks:
+      - monolith-network
+
+  postgres_0_12:
+    image: postgres:latest
+    container_name: postgres_0_12
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_0_12}
+      POSTGRES_USER: ${POSTGRES_USER_0_12}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_0_12}
+    volumes:
+      - postgres_0_12_data:/var/lib/postgresql/data
+    networks:
+      - monolith-network
+
+  postgres_12_24:
+    image: postgres:latest
+    container_name: postgres_12_24
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_12_24}
+      POSTGRES_USER: ${POSTGRES_USER_12_24}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_12_24}
+    volumes:
+      - postgres_12_24_data:/var/lib/postgresql/data
+    networks:
+      - monolith-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    volumes:
+      - redis-data:/data
+    networks:
+      - monolith-network
+
+volumes:
+  mongo-data:
+  postgres_0_12_data:
+  postgres_12_24_data:
+  redis-data:
+
+networks:
+  monolith-network:
+    name: monolith-network
