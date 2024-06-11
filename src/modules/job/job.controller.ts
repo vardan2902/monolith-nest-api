@@ -1,4 +1,11 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiKeyGuard } from 'src/guards/api-key.guard';
 import { RateLimitingGuard } from 'src/guards/rate-limiting.guard';
 import { RequestWithRequester } from 'src/types';
@@ -7,6 +14,7 @@ import { EventNames } from '../event/enums';
 import { EventEmitterRedisService } from 'src/modules/event/event-emitter-redis.service';
 
 @Controller('job')
+@UseInterceptors(ClassSerializerInterceptor)
 export class JobController {
   constructor(
     private readonly jobService: JobService,
