@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo-test
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    env_file:
+      - .env.test
+
+  postgres_0_12:
+    image: postgres:latest
+    container_name: postgres_0_12-test
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env.test
+    volumes:
+      - postgres_0_12_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_0_12}
+
+  postgres_12_24:
+    image: postgres:latest
+    container_name: postgres_12_24-test
+    ports:
+      - "5435:5432"
+    env_file:
+      - .env.test
+    volumes:
+      - postgres_12_24_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_12_24}
+
+  redis:
+    image: redis:latest
+    container_name: redis-test
+    ports:
+      - "6380:6379"
+    env_file:
+      - .env.test
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongo-data:
+  postgres_0_12_data:
+  postgres_12_24_data:
+  redis-data:
